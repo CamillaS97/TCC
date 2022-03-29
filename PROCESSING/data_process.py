@@ -8,14 +8,14 @@ import json
 
 
 #initializing all temperature and humidity variables as 0 for easier comparison aftewards
-higher_temp = higher_hum = lower_temp = lower_hum = temp_total = temp_anterior = alerta = 0
+higher_temp = higher_hum = lower_temp = lower_hum = temp_total = temp_anterior = alerta = alerta_high = 0
 file_name = (datetime.today() - timedelta(1)).strftime('%Y-%m-%d')
 
 def log_messages(data_list):
     logging.basicConfig(filename= file_name + '.log', filemode='w', level=logging.DEBUG, format='%(levelname)s: %(message)s')
     i=0
     for data in data_list:
-        if(i != 5):
+        if(i < 5):
             logging.info(data_list[i])
         else:
             if(re.search(r'\b0\b', data_list[i])):
@@ -66,7 +66,9 @@ for row in data:
         lower_hum = humidity
         msg_low_hum = "Menor humidade: " + str(lower_hum) + "%. Horario: " + str(row[2])
 
-    
+    if (temperature >= 30):
+        alerta_high = alerta_high+1
+
     if (temp_anterior != 0):
         if(temp_anterior - temperature >= 4 or temp_anterior - temperature <= -4 ):
             alerta = alerta + 1            
@@ -78,8 +80,9 @@ for row in data:
 average_temp = temp_total/total_data
 msg_average = "Temperatura media: " + str(average_temp)
 msg_alerta = str(alerta) + " variacoes bruscas ocorreram"
+msg_superaq = "A temperatura ultrapassou o valor maximo em " + str(alerta_high) + " vezes"
 
-log_messages([msg_temp, msg_low_temp, msg_hum, msg_low_hum, msg_average, msg_alerta])
+log_messages([msg_temp, msg_low_temp, msg_hum, msg_low_hum, msg_average, msg_alerta, msg_superaq])
 
 
 cursor.close()
