@@ -47,6 +47,6 @@ while True:
         response.close()
       except OSError as e:
         print(e)
-      sleep(600)
+      sleep(60)
     except OSError as e:
       print('Failed to read sensor.')
